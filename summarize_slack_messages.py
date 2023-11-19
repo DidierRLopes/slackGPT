@@ -18,19 +18,22 @@ OPENAI_API_KEY= os.getenv('OPENAI_API_KEY') or "REPLACE-ME"
 SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL') or "REPLACE-ME"
 SLACK_TOKEN = os.getenv('SLACK_TOKEN') or "REPLACE-ME"
 
-## Select Slack channels
-CHANNELS_LIST = ["SLACKID"]
+## Slack channels ids separated by commas (no spaces), e.g. ABC123,DEF456,GHI789
+SLACK_CHANNEL_IDS = os.getenv('SLACK_CHANNEL_IDS') or "REPLACE-ME"
 
 
 def main():
     openai.api_key = OPENAI_API_KEY
     client = WebClient(token=SLACK_TOKEN)
 
-    for channel_id in CHANNELS_LIST:
+    for channel_id in SLACK_CHANNEL_IDS.split(","):
         # Store conversation history
         conversation_history = []
 
         try:
+
+            # --- Get conversation history ---
+
             # Get the current date and time in UTC
             current_datetime_utc = datetime.utcnow()
 
@@ -41,6 +44,8 @@ def main():
             result = client.conversations_history(channel=channel_id, oldest=str(int(start_of_today_utc.timestamp())))
 
             conversation_history = result["messages"]
+
+            # --- Parse conversation history ---
 
             convo = ""
             # Parse this conversation history
@@ -65,17 +70,19 @@ def main():
                         
                         # Create the conversation from a channel
                         convo += text + "\n"
+            
+            # --- Get channel name ---
+
+            # Call the conversations.info method with the channel ID
+            conversation_info = client.conversations_info(channel=channel_id)
+
+            # Extract the channel name from the result
+            channel_name = conversation_info["channel"]["name"]
 
             # Print results
-            if text:
+            if convo:
 
-                # Call the conversations.info method with the channel ID
-                conversation_info = client.conversations_info(channel=channel_id)
-
-                # Extract the channel name from the result
-                channel_name = conversation_info["channel"]["name"]
-
-                ## OpenAI Summarization
+                # --- OpenAI Summarization ---
 
                 response = openai.ChatCompletion.create(
                     model="gpt-4",
@@ -92,10 +99,31 @@ def main():
                 )
                 summary = response.choices[0].message.content
 
-                ## Send Slack message with summary
+                # --- Send Slack message with summary ---
 
                 payload = {
                     'text': summary,
+                }
+
+                req = Request(SLACK_WEBHOOK_URL, json.dumps(payload).encode('utf-8'))
+                try:
+                    response = urlopen(req)
+                    response.read()
+                    
+                    print("SUCCESS: Message with insights sent to slack\n")
+
+                except HTTPError as e:
+                    print(f"Request failed: {e.code} {e.reason}\n")
+                    
+                except URLError as e:
+                    print(f"Server connection failed: {e.reason}\n")
+
+            else:
+
+                # --- Send Slack message saying no messages were found ---
+
+                payload = {
+                    'text': f"No messages were found in channel {channel_name}.",
                 }
 
                 req = Request(SLACK_WEBHOOK_URL, json.dumps(payload).encode('utf-8'))
