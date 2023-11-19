@@ -9,22 +9,22 @@ from datetime import datetime
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-## Load environment variables
+# Load environment variables
 load_dotenv()
 
-## OpenAI API
-OPENAI_API_KEY= os.getenv('OPENAI_API_KEY') or "REPLACE-ME"
+# OpenAI API
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY') or "REPLACE-ME"
 
-## Slack API
+# Slack API
 SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL') or "REPLACE-ME"
 SLACK_TOKEN = os.getenv('SLACK_TOKEN') or "REPLACE-ME"
 
-## Slack channels ids separated by commas (no spaces), e.g. ABC123,DEF456,GHI789
+# Slack channels ids separated by commas (no spaces), e.g. ABC123,DEF456,GHI789
 SLACK_CHANNEL_IDS = os.getenv('SLACK_CHANNEL_IDS') or "REPLACE-ME"
 
 
 def main():
-    
+
     client = WebClient(token=SLACK_TOKEN)
 
     for channel_id in SLACK_CHANNEL_IDS.split(","):
