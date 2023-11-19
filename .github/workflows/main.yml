@@ -31,6 +31,6 @@ jobs:
           pip install openai
           pip install slack-sdk
 
-      - name: summarize slack messages
+      - name: run SlackGPT
         run: |
-          python summarize_slack_messages.py
+          python slackgpt.py
