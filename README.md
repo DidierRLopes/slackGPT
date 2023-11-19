@@ -1,6 +1,6 @@
 # SlackGPT
 
-The SlackGPT is a Slack bot that summarizes conversations and sends you a summary per channel where the SlackGPT bot is added.
+The SlackGPT is a Slack bot that summarizes conversations and sends you a summary per channel.
 
 If you want to run it locally, you can use:
 
