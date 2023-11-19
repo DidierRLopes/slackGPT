@@ -1,7 +1,14 @@
 # SlackGPT
 
-The SlackGPT is a slack bot that summarizes conversations and sends you a summary per channel where SlackGPT bot is added.
+The SlackGPT is a Slack bot that summarizes conversations and sends you a summary per channel where the SlackGPT bot is added.
 
+If you want to run it locally, you can use:
+
+```console
+python slackgpt.py
+```
+
+Otherwise, fork the project, set up the GitHub secrets and you can leverage the GitHub action to run it automatically.
 
 ## Getting Started
 
