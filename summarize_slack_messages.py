@@ -1,12 +1,10 @@
 import os
 import json
-import pandas as pd
-import requests
 import openai
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import datetime
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
