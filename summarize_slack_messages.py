@@ -1,6 +1,7 @@
 import os
 import json
-import openai
+from openai import OpenAI
+
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from dotenv import load_dotenv
@@ -23,7 +24,7 @@ SLACK_CHANNEL_IDS = os.getenv('SLACK_CHANNEL_IDS') or "REPLACE-ME"
 
 
 def main():
-    openai.api_key = OPENAI_API_KEY
+    
     client = WebClient(token=SLACK_TOKEN)
 
     for channel_id in SLACK_CHANNEL_IDS.split(","):
@@ -84,7 +85,9 @@ def main():
 
                 # --- OpenAI Summarization ---
 
-                response = openai.ChatCompletion.create(
+                client = OpenAI(api_key=OPENAI_API_KEY)
+
+                response = client.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {
